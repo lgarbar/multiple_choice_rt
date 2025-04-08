@@ -41,11 +41,11 @@ visuals = {
     'Feedback3': [['options.png'], 'space', True],
     'Practice4': [],
     'Instructions6': ['Good job on the practice trials. You can now move on to the test trials.\n\nYou will do the same task as in the practice, completing a distinct blocks of trials for each of the phases described earlied.\n\nEach block will last about 3-5 minutes long. You will have a short break in between these trials.', 'space', False],
-    'Break1': [['options.png'], 'space', True],
+    'Instructions7': [['options.png'], 'space', True],
     'Stim1': [],
-    'Break2': [['break.png'], 'space', True],
+    'Break1': [['break.png'], 'space', True],
     'Stim2': [],
-    'Break4': [['break.png'], 'space', True],
+    'Break2': [['break.png'], 'space', True],
     'Stim4': [],
     '4RTEnd': ['Thank you!', 'space', True]
 }
@@ -201,7 +201,7 @@ while cont:
                     scr.screen.append(image)
                     disp.fill(screen=scr)
                     disp.show()
-                    core.wait(round(random.uniform(0.5, 3), 2))
+                    core.wait(round(random.uniform(1, 4), 2))
                 else:
                     image.setImage(image_text.format(f'{pre_text}/{cur_stim}'))
                     scr.screen.append(image)
@@ -209,23 +209,14 @@ while cont:
                     response_received = False
                     disp.fill(screen=scr)
                     disp.show()
-                    
-                    # Check if the visual screen requires a space key press
-                    if visuals[visual_screen][1] == 'space':
-                        keys = event.waitKeys(keyList=['space', 'escape'])
+                    while core.getTime() - image_start_time < image_display_duration:
+                        keys = event.getKeys(keyList=['escape'])
                         if 'escape' in keys:
                             print("Escape key pressed. Exiting...")
                             cont = False
-                    else:
-                        # Original timeout logic for other cases
-                        while core.getTime() - image_start_time < image_display_duration:
-                            keys = event.getKeys(keyList=['escape'])
-                            if 'escape' in keys:
-                                print("Escape key pressed. Exiting...")
-                                cont = False
-                                break
-                            if response_received:
-                                break
+                            break
+                        if response_received:
+                            break
             rep += 1
         else:
             rep = 0
