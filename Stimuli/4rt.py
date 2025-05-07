@@ -18,88 +18,80 @@ parser.add_argument('--filename', dest='filename', type=str, help='name of outpu
 args = parser.parse_args()
 
 waiting_1 = 'Stimuli/Images/1_option/options.png'
-waiting_2 = 'Stimuli/Images/2_option/options.png'
-waiting_4 = 'Stimuli/Images/4_option/options.png'
+waiting_2 = 'Stimuli/Images/2_options/options.png'
+waiting_4 = 'Stimuli/Images/4_options/options.png'
 break_1 = 'Stimuli/Images/1_option/break.png'
-break_2 = 'Stimuli/Images/2_option/break.png'
-break_4 = 'Stimuli/Images/4_option/break.png'
+break_2 = 'Stimuli/Images/2_options/break.png'
+break_4 = 'Stimuli/Images/4_options/break.png'
 
 visuals = {
     '4RTStart': ['Next activity starting soon.', 'space', True],
-    'Instructions1': ["You will see images presented on the screen that correspond to the buttons on the device you are holding.\n\nWhen the image appears, you'll press the corresponding button.", 'space', False],
+    'Instructions1': ["You will see images presented on the screen that correspond to the buttons on the device you are holding.\n\nWhen the image appears, press the corresponding button.", 'space', False],
     'Instructions2': ["At first, only the stimulus that matches the left button will appear,\n\nand so you'll only be responding using that left button.\n\nGo ahead and press the left button once you see the diagonal line appear on screen.", 'space', False],
-    'Example1': [['line.png', 'feedback'], 'c', True],
+    'Example1': [['line', 'feedback'], 'c', True],
     'Instructions3': ["Next, the stimuli that match the left or right buttons will appear,\n\nso you'll have to respond using the left or right buttons.\n\nGo ahead and press the right button once you see the square appear on screen.", 'space', False],
-    'Example2': [['square.png', 'feedback'], 'c', True],
+    'Example2': [['square', 'feedback'], 'c', True],
     'Instructions4': ["In the final phase, you will respond to any of the four stimuli using all four buttons.\n\nGo ahead and press the middle button with the circle once you see the circle appear on screen.", 'space', False],
-    'Example4': [['circle.png', 'feedback'], 'c', True],
+    'Example4': [['circle', 'feedback'], 'c', True],
     'Instructions5': ['Now you will have a chance to practice the task before moving on to the first phase.\n\nPay attention to the instructions on screen to know which stimuli could appear.', 'space', False],
-    'Feedback1': [['options.png'], 'space', True],
-    'Practice1': [],
-    'Feedback2': [['options.png'], 'space', True],
-    'Practice2': [],
-    'Feedback3': [['options.png'], 'space', True],
-    'Practice4': [],
+    'Feedback1': [['options'], 'space', True],
+    'Practice1': None,
+    'Feedback2': [['options'], 'space', True],
+    'Practice2': None,
+    'Feedback3': [['options'], 'space', True],
+    'Practice4': None,
     'Instructions6': ['Good job on the practice trials. You can now move on to the test trials.\n\nYou will do the same task as in the practice, completing a distinct blocks of trials for each of the phases described earlied.\n\nEach block will last about 3-5 minutes long. You will have a short break in between these trials.', 'space', False],
-    'Break1': [['options.png'], 'space', True],
-    'Stim1': [],
-    'Break2': [['break.png'], 'space', True],
-    'Stim2': [],
-    'Break4': [['break.png'], 'space', True],
-    'Stim4': [],
+    'Break1': [['options'], 'space', True],
+    'Stim1': None,
+    'Break2': [['break'], 'space', True],
+    'Stim2': None,
+    'Break4': [['break'], 'space', True],
+    'Stim4': None,
     '4RTEnd': ['Thank you!', 'space', True]
 }
 
+def get_sched_df(fpath):
+    with open(fpath, 'r') as f:
+        lines = f.readlines()
+        lines = [line.split() for line in lines]
+    schedule = pd.DataFrame(lines, columns=['time', 'stim_code', 'duration', '?', 'stim_type'])
+    schedule = schedule.apply(pd.to_numeric, errors='ignore')
+    schedule = schedule.drop(columns=['time', 'stim_code', '?'])
+    return schedule
+
 def get_order_file(order_dirs):
     order_list = os.listdir(order_dirs)
+    order_list = [file for file in order_list if file.endswith('.par')]
     random.shuffle(order_list)
-    order_list = order_list[:2]
+    if not order_list:
+        return []
+    order_list = order_list[:1]
     return [os.path.join(order_dirs, file) for file in order_list]
 
-def get_order_list(txt_path, practice=False):
-    with open(txt_path, 'r') as file:
-        order_list = [line.strip() for line in file]
-    order_list = [f'{file}.png' for file in order_list]
-    if practice:
-        new_order_list = []
-        for item in order_list:
-            new_order_list.append('waiting.png')
-            new_order_list.append(item)
-            new_order_list.append('feedback')
-        return new_order_list[:20]
-    else:
-        new_order_list = []
-        for item in order_list:
-            new_order_list.append('waiting.png')
-            new_order_list.append(item)
-        return new_order_list[:20]
-
-image_text = '/Users/AP-CNL/Desktop/4RT/Stimuli/Images/{}'
-one_opt_dirs = '/Users/AP-CNL/Desktop/4RT/Stimuli/Order/1_option'
-two_opt_dirs = '/Users/AP-CNL/Desktop/4RT/Stimuli/Order/2_options'
-four_opt_dirs = '/Users/AP-CNL/Desktop/4RT/Stimuli/Order/4_options'
+image_text = 'Stimuli/Images/{}'
+one_opt_dirs = 'Stimuli/Schedules/1_option'
+two_opt_dirs = 'Stimuli/Schedules/2_options'
+four_opt_dirs = 'Stimuli/Schedules/4_options'
 
 one_opt_fname_list = get_order_file(one_opt_dirs)
-one_opt_fname = one_opt_fname_list[0]
-one_opt_prac_fname = one_opt_fname_list[1]
+one_opt_fname = one_opt_fname_list[0] if one_opt_fname_list else None
 
 two_opt_fname_list = get_order_file(two_opt_dirs)
-two_opt_fname = two_opt_fname_list[0]
-two_opt_prac_fname = two_opt_fname_list[1]
+two_opt_fname = two_opt_fname_list[0] if two_opt_fname_list else None
 
 four_opt_fname_list = get_order_file(four_opt_dirs)
-four_opt_fname = four_opt_fname_list[0]
-four_opt_prac_fname = four_opt_fname_list[1]
+four_opt_fname = four_opt_fname_list[0] if four_opt_fname_list else None
 
-stimlist1, stimlist2, stimlist4 = get_order_list(one_opt_fname), get_order_list(two_opt_fname), get_order_list(four_opt_fname)
-practicelist1, practicelist2, practicelist4 = get_order_list(one_opt_prac_fname, practice=True), get_order_list(two_opt_prac_fname, practice=True), get_order_list(four_opt_prac_fname, practice=True)
+schedule1 = get_sched_df(one_opt_fname)[::-1].reset_index(drop=True) if one_opt_fname else pd.DataFrame()
+schedule2 = get_sched_df(two_opt_fname)[::-1].reset_index(drop=True) if two_opt_fname else pd.DataFrame()
+schedule4 = get_sched_df(four_opt_fname)[::-1].reset_index(drop=True) if four_opt_fname else pd.DataFrame()
 
-visuals['Stim1'] = [stimlist1, 'c', True]
-visuals['Stim2'] = [stimlist2, 'c', True]
-visuals['Stim4'] = [stimlist4, 'c', True]
-visuals['Practice1'] = [practicelist1, 'c', True]
-visuals['Practice2'] = [practicelist2, 'c', True]
-visuals['Practice4'] = [practicelist4, 'c', True]
+visuals['Stim1'] = [schedule1, 'c', True]
+visuals['Stim2'] = [schedule2, 'c', True]
+visuals['Stim4'] = [schedule4, 'c', True]
+visuals['Practice1'] = [schedule1[:20] if not schedule1.empty else None, 'c', True]
+visuals['Practice2'] = [schedule2[:20] if not schedule2.empty else None, 'c', True]
+visuals['Practice4'] = [schedule4[:20] if not schedule4.empty else None, 'c', True]
 
 disp = Display(disptype='psychopy', bgc='black')
 scr = Screen(disptype='psychopy', bgc='black')
@@ -107,37 +99,22 @@ event.Mouse(visible=False)
 center_text = psychopy.visual.TextStim(win=pygaze.expdisplay, text='', height=50, wrapWidth=1080)
 image = psychopy.visual.ImageStim(win=pygaze.expdisplay, image=None)
 
-image_base_dir = '/Users/AP-CNL/Desktop/4RT/Stimuli/Images'
-out_dict = {'sectionname': ['starttime', 'endtime', 'duration', 'responsetime', 'delta', 'condition', 'response', 'accuracy']}
-val_dict = {'line.png': 1, 'circle.png': 2, 'triangle.png': 3, 'square.png': 4}
-cont = True
-visual_screens = list(visuals.keys())
-visual_screen_idx = 0
-visual_screen = None
-new_screen = True
-finish_screen = False
-task_clock = core.Clock()
-timeout = 2
-fixationtime = .5
-curtime = None
-starttime = None
-endtime = None
-duration = None
-responsetime = None
-response = None
-delta = None
-condition = None
-accuracy = None
-rep = 0
-cur_stim = None
-accuracy_list = []
-image_display_duration = 2.0
-image_start_time = 0.0
+val_dict = {'line': 1, 'circle': 2, 'triangle': 3, 'square': 4}
+
+last_stim_responsetime = None
+last_stim_accuracy = None
+last_stim_response = None
+
 response_received = False
 correct_value = np.nan
+current_value = None
+
+accuracy_list = []
+
+out_dict = {'sectionname': ['starttime', 'endtime', 'duration', 'responsetime', 'delta', 'condition', 'response', 'accuracy']}
 
 def on_click(x, y, button, pressed):
-    global current_value, response_received, correct_value
+    global current_value, response_received
     if pressed:
         if button == pynput_mouse.Button.left:
             current_value = 1
@@ -148,109 +125,299 @@ def on_click(x, y, button, pressed):
         elif button == pynput_mouse.Button.right:
             current_value = 4
         response_received = True
+    return True
 
 listener = pynput_mouse.Listener(on_click=on_click)
 listener.start()
 
-while cont:
-    visual_screen = visual_screens[visual_screen_idx]
-    center_text.text = visuals[visual_screen][0] if isinstance(visuals[visual_screen][0], str) else ''
-    scr.screen.clear()
-    scr.screen.append(center_text)
+image_display_duration = 2
+practice_blocks = ['Practice1', 'Practice2', 'Practice4']
+practice_attempts = {block: 0 for block in practice_blocks}
+max_practice_attempts = 3
 
-    if not isinstance(visuals[visual_screen][0], str):
-        if rep < len(visuals[visual_screen][0]):
-            cur_stim = visuals[visual_screen][0][rep]
-            if cur_stim == 'feedback':
-                while core.getTime() - image_start_time < image_display_duration:
-                    keys = event.getKeys(keyList=['escape'])
-                    if 'escape' in keys:
-                        print("Escape key pressed. Exiting...")
-                        cont = False
-                        break
-                    if response_received:
-                        if correct_value == current_value:
-                            center_text.text = "Correct"
+cont = True
+visual_screens = list(visuals.keys())
+visual_screen_idx = 0
+
+task_clock = core.Clock()
+
+while cont:
+    if visual_screen_idx < len(visual_screens):
+        visual_screen_name = visual_screens[visual_screen_idx]
+        visual_screen_data = visuals[visual_screen_name]
+        screen_content = visual_screen_data[0]
+        screen_wait_condition = visual_screen_data[1]
+        log_screen_data = visual_screen_data[2]
+
+        scr.screen.clear()
+
+        if isinstance(visual_screen_data, str):
+            center_text.text = visual_screen_data
+            scr.screen.append(center_text)
+            disp.fill(screen=scr)
+            disp.show()
+
+            item_starttime = task_clock.getTime()
+            item_condition = 'text'
+
+            if screen_wait_condition == 'space':
+                keys = event.waitKeys(keyList=['space'])
+                item_endtime = task_clock.getTime()
+                item_duration = item_endtime - item_starttime
+                item_delta = None
+
+                item_key = f"{visual_screen_name}"
+                out_dict[item_key] = [item_starttime, item_endtime, item_duration, None, None, item_condition, None, None]
+
+                visual_screen_idx += 1
+                if visual_screen_idx >= len(visual_screens):
+                    cont = False
+            else:
+                pass
+
+        elif isinstance(screen_content, pd.DataFrame):
+            schedule = screen_content
+            if not schedule.empty:
+                if current_rep < len(schedule):
+                    cur_item = schedule['stim_type'][current_rep]
+
+                    item_responsetime = None
+                    item_response = None
+                    item_accuracy = None
+                    item_condition = None
+                    item_delta = None
+
+                    item_starttime = task_clock.getTime()
+                    item_condition = cur_item
+
+                    if cur_item == 'NULL':
+                        if 'Stim1' in visual_screen_name or 'Practice1' in visual_screen_name:
+                            pre_text = '1_option'
+                        elif 'Stim2' in visual_screen_name or 'Practice2' in visual_screen_name:
+                            pre_text = '2_options'
+                        elif 'Stim4' in visual_screen_name or 'Practice4' in visual_screen_name:
+                            pre_text = '4_options'
                         else:
-                            center_text.text = "Incorrect"
-                        scr.screen.clear()
-                        scr.screen.append(center_text)
+                            pre_text = '1_option'
+                        image_path = image_text.format(f'{pre_text}/options.png')
+
+                        image.setImage(image_path)
+                        scr.screen.append(image)
                         disp.fill(screen=scr)
                         disp.show()
-                        core.wait(1)
-                        break
-                if not response_received:
-                    center_text.text = "Too Slow"
-                    scr.screen.clear()
-                    scr.screen.append(center_text)
-                    disp.fill(screen=scr)
-                    disp.show()
-                    core.wait(1)
-            else:
-                if '1' in visual_screen:
-                    pre_text = '1_option'
-                elif '2' in visual_screen:
-                    pre_text = '2_options'
-                else:
-                    pre_text = '4_options'
 
-                if cur_stim in val_dict:
-                    correct_value = val_dict[cur_stim]
-                if cur_stim == 'waiting.png':
-                    image.setImage(image_text.format(f'{pre_text}/{cur_stim}'))
-                    scr.screen.append(image)
-                    disp.fill(screen=scr)
-                    disp.show()
-                    core.wait(round(random.uniform(0.5, 3), 2))
-                else:
-                    image.setImage(image_text.format(f'{pre_text}/{cur_stim}'))
-                    scr.screen.append(image)
-                    image_start_time = core.getTime()
-                    response_received = False
-                    disp.fill(screen=scr)
-                    disp.show()
-                    
-                    # Check if the visual screen requires a space key press
-                    if visuals[visual_screen][1] == 'space':
-                        keys = event.waitKeys(keyList=['space', 'escape'])
-                        if 'escape' in keys:
-                            print("Escape key pressed. Exiting...")
-                            cont = False
+                        item_endtime = task_clock.getTime()
+                        item_duration = item_endtime - item_starttime
+                        item_delta = None
+
+                        item_key = f"{visual_screen_name}_{current_rep}"
+                        out_dict[item_key] = [item_starttime, item_endtime, item_duration, item_responsetime, item_delta, item_condition, item_response, item_accuracy]
+
+                        current_rep += 1
+
                     else:
-                        # Original timeout logic for other cases
-                        while core.getTime() - image_start_time < image_display_duration:
+                        if '1' in visual_screen_name:
+                            pre_text = '1_option'
+                        elif '2' in visual_screen_name:
+                            pre_text = '2_options'
+                        else:
+                            pre_text = '4_options'
+                        image_path = image_text.format(f'{pre_text}/{cur_item}.png')
+
+                        image.setImage(image_path)
+                        scr.screen.append(image)
+                        disp.fill(screen=scr)
+                        disp.show()
+
+                        item_starttime = task_clock.getTime()
+                        item_condition = cur_item
+
+                        if cur_item in val_dict:
+                            correct_value = val_dict[cur_item]
+                        else:
+                            correct_value = np.nan
+
+                        response_received = False
+                        current_value = None
+                        item_responsetime = None
+                        item_response = None
+                        item_accuracy = 0
+
+                        while task_clock.getTime() - item_starttime < image_display_duration:
                             keys = event.getKeys(keyList=['escape'])
                             if 'escape' in keys:
                                 print("Escape key pressed. Exiting...")
                                 cont = False
                                 break
                             if response_received:
+                                item_responsetime = task_clock.getTime()
+                                if current_value == 1: item_response = 'left'
+                                elif current_value == 2: item_response = 'middle_l'
+                                elif current_value == 3: item_response = 'middle_r'
+                                elif current_value == 4: item_response = 'right'
+                                if correct_value is not np.nan and current_value == correct_value:
+                                    item_accuracy = 1
+                                else:
+                                    item_accuracy = 0
                                 break
-            rep += 1
-        else:
-            rep = 0
-            visual_screen_idx += 1
-            if visual_screen_idx >= len(visual_screens):
-                cont = False
-    else:
-        disp.fill(screen=scr)
-        disp.show()
-        if visuals[visual_screen][1] == 'space':
-            keys = event.waitKeys(keyList=['space', 'escape'])
-            if 'escape' in keys:
-                print("Escape key pressed. Exiting...")
-                cont = False
+
+                        last_stim_responsetime = item_responsetime
+                        last_stim_accuracy = item_accuracy
+                        last_stim_response = item_response
+
+                        accuracy_list.append(item_accuracy)
+
+                        item_endtime = task_clock.getTime()
+                        item_duration = item_endtime - item_starttime
+                        item_delta = item_responsetime - item_starttime if item_responsetime is not None else None
+
+                        item_key = f"{visual_screen_name}_{current_rep}"
+                        out_dict[item_key] = [item_starttime, item_endtime, item_duration, item_responsetime, item_delta, item_condition, item_response, item_accuracy]
+
+                        current_rep += 1
+
+                else:
+                    if visual_screen_name in practice_blocks:
+                        if accuracy_list:
+                            mean_accuracy = np.mean(accuracy_list)
+                            print(f"{visual_screen_name} Accuracy: {mean_accuracy:.2f}")
+
+                            if mean_accuracy >= 0.75:
+                                visual_screen_idx += 1
+                            else:
+                                practice_attempts[visual_screen_name] += 1
+                                if practice_attempts[visual_screen_name] >= max_practice_attempts:
+                                    print(f"Maximum practice attempts reached for {visual_screen_name}. Ending experiment.")
+                                    cont = False
+                                else:
+                                    current_rep = 0
+                                    accuracy_list = []
+                                    center_text.text = "Good job on that practice.\nYou'll now perform another round of that block."
+                                    scr.screen.append(center_text)
+                                    disp.fill(screen=scr)
+                                    disp.show()
+                                    core.wait(2.0)
+                            accuracy_list = []
+
+                        else:
+                            print("No practice trials completed.")
+                            cont = False
+                    else:
+                        visual_screen_idx += 1
+
+                    current_rep = 0
+                    if visual_screen_idx >= len(visual_screens):
+                        cont = False
+
+        elif isinstance(screen_content, list):
+            if current_rep < len(screen_content):
+                cur_item = screen_content[current_rep]
+
+                item_responsetime = None
+                item_response = None
+                item_accuracy = None
+                item_condition = None
+                item_delta = None
+               
+                if cur_item == 'feedback':
+                    if last_stim_responsetime is None:
+                        center_text.text = "Too Slow."
+                    elif last_stim_accuracy == 1:
+                        center_text.text = "Correct!"
+                    elif last_stim_accuracy == 0:
+                        center_text.text = "Incorrect."
+
+                    scr.screen.append(center_text)
+                    disp.fill(screen=scr)
+                    disp.show()
+
+                    item_starttime = task_clock.getTime()
+                    item_condition = 'feedback'
+
+                    core.wait(1.0)
+
+                    item_endtime = task_clock.getTime()
+                    item_duration = item_endtime - item_starttime
+                    item_delta = None
+
+                    item_key = f"{visual_screen_name}_{current_rep}"
+                    out_dict[item_key] = [item_starttime, item_endtime, item_duration, item_responsetime, item_delta, item_condition, item_response, item_accuracy]
+                    current_rep += 1
+                else:
+                    if '1' in visual_screen_name:
+                        pre_text = '1_option'
+                    elif '2' in visual_screen_name:
+                        pre_text = '2_options'
+                    else:
+                        pre_text = '4_options'
+                    image_path = image_text.format(f'{pre_text}/{cur_item}.png')
+
+                    image.setImage(image_path)
+                    scr.screen.append(image)
+                    disp.fill(screen=scr)
+                    disp.show()
+
+                    item_starttime = task_clock.getTime()
+                    item_condition = cur_item
+
+                    if cur_item in val_dict:
+                        correct_value = val_dict[cur_item]
+                    else:
+                        correct_value = np.nan
+
+                    response_received = False
+                    current_value = None
+                    item_responsetime = None
+                    item_response = None
+                    item_accuracy = 0
+
+                    while task_clock.getTime() - item_starttime < image_display_duration:
+                        keys = event.getKeys(keyList=['escape'])
+                        if 'escape' in keys:
+                            print("Escape key pressed. Exiting...")
+                            cont = False
+                            break
+                        if response_received:
+                            item_responsetime = task_clock.getTime()
+                            if current_value == 1: item_response = 'left'
+                            elif current_value == 2: item_response = 'middle_l'
+                            elif current_value == 3: item_response = 'middle_r'
+                            elif current_value == 4: item_response = 'right'
+                            if correct_value is not np.nan and current_value == correct_value:
+                                item_accuracy = 1
+                            else:
+                                item_accuracy = 0
+                            break
+
+                    last_stim_responsetime = item_responsetime
+                    last_stim_accuracy = item_accuracy
+                    last_stim_response = item_response
+
+                    accuracy_list.append(item_accuracy)
+
+                    item_endtime = task_clock.getTime()
+                    item_duration = item_endtime - item_starttime
+                    item_delta = item_responsetime - item_starttime if item_responsetime is not None else None
+
+                    item_key = f"{visual_screen_name}_{current_rep}"
+                    out_dict[item_key] = [item_starttime, item_endtime, item_duration, item_responsetime, item_delta, item_condition, item_response, item_accuracy]
+                    current_rep += 1
+
             else:
+                current_rep = 0
                 visual_screen_idx += 1
                 if visual_screen_idx >= len(visual_screens):
                     cont = False
         else:
-            core.wait(1)
-            visual_screen_idx += 1
-            if visual_screen_idx >= len(visual_screens):
-                cont = False
+            print("Unexpected data type for visual screen:", type(screen_content))
+            cont = False
+    else:
+        cont = False
 
-df = pd.DataFrame(out_dict)
-df = df.transpose()
+listener.stop()
+
+df = pd.DataFrame.from_dict(out_dict, orient='index', columns=['starttime', 'endtime', 'duration', 'responsetime', 'delta', 'condition', 'response', 'accuracy'])
+df.index.name = 'sectionname'
 df.to_csv(args.filename)
+
 disp.close()
