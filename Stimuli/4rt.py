@@ -75,23 +75,35 @@ four_opt_dirs = 'Stimuli/Schedules/4_options'
 
 one_opt_fname_list = get_order_file(one_opt_dirs)
 one_opt_fname = one_opt_fname_list[0] if one_opt_fname_list else None
+schedule1 = get_sched_df(one_opt_fname)[::-1].reset_index(drop=True) if one_opt_fname else pd.DataFrame()
 
 two_opt_fname_list = get_order_file(two_opt_dirs)
 two_opt_fname = two_opt_fname_list[0] if two_opt_fname_list else None
+schedule2 = get_sched_df(two_opt_fname)[::-1].reset_index(drop=True) if two_opt_fname else pd.DataFrame()
 
 four_opt_fname_list = get_order_file(four_opt_dirs)
 four_opt_fname = four_opt_fname_list[0] if four_opt_fname_list else None
-
-schedule1 = get_sched_df(one_opt_fname)[::-1].reset_index(drop=True) if one_opt_fname else pd.DataFrame()
-schedule2 = get_sched_df(two_opt_fname)[::-1].reset_index(drop=True) if two_opt_fname else pd.DataFrame()
 schedule4 = get_sched_df(four_opt_fname)[::-1].reset_index(drop=True) if four_opt_fname else pd.DataFrame()
 
 visuals['Stim1'] = [schedule1, 'c', True]
 visuals['Stim2'] = [schedule2, 'c', True]
 visuals['Stim4'] = [schedule4, 'c', True]
-visuals['Practice1'] = [schedule1[:20] if not schedule1.empty else None, 'c', True]
-visuals['Practice2'] = [schedule2[:20] if not schedule2.empty else None, 'c', True]
-visuals['Practice4'] = [schedule4[:20] if not schedule4.empty else None, 'c', True]
+
+one_opt_fname_list = get_order_file(one_opt_dirs)
+one_opt_fname = one_opt_fname_list[0] if one_opt_fname_list else None
+practice1 = get_sched_df(one_opt_fname)[::-1].reset_index(drop=True)[:20] if one_opt_fname else pd.DataFrame()
+
+two_opt_fname_list = get_order_file(two_opt_dirs)
+two_opt_fname = two_opt_fname_list[0] if two_opt_fname_list else None
+practice2 = get_sched_df(two_opt_fname)[::-1].reset_index(drop=True)[:20] if two_opt_fname else pd.DataFrame()
+
+four_opt_fname_list = get_order_file(four_opt_dirs)
+four_opt_fname = four_opt_fname_list[0] if four_opt_fname_list else None
+practice4 = get_sched_df(four_opt_fname)[::-1].reset_index(drop=True)[:20] if four_opt_fname else pd.DataFrame()
+
+visuals['Practice1'] = [practice1[:20] if not practice1.empty else None, 'c', True]
+visuals['Practice2'] = [practice2[:20] if not practice2.empty else None, 'c', True]
+visuals['Practice4'] = [practice4[:20] if not practice4.empty else None, 'c', True]
 
 disp = Display(disptype='psychopy', bgc='black')
 scr = Screen(disptype='psychopy', bgc='black')
