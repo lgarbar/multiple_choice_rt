@@ -17,12 +17,7 @@ parser = argparse.ArgumentParser(description='')
 parser.add_argument('--filename', dest='filename', type=str, help='name of output data file (.csv)', required=True)
 args = parser.parse_args()
 
-waiting_1 = 'Stimuli/Images/1_option/options.png'
-waiting_2 = 'Stimuli/Images/2_options/options.png'
-waiting_4 = 'Stimuli/Images/4_options/options.png'
-break_1 = 'Stimuli/Images/1_option/break.png'
-break_2 = 'Stimuli/Images/2_options/break.png'
-break_4 = 'Stimuli/Images/4_options/break.png'
+practice_dirs = '/Users/AP-CNL/Desktop/4RT/Stimuli/Schedules/practice'
 
 visuals = {
     '4RTStart': ['Next activity starting soon.', 'space', True],
@@ -34,19 +29,22 @@ visuals = {
     'Instructions4': ["In the final phase, you will respond to any of the four stimuli using all four buttons.\n\nGo ahead and press the middle button with the circle once you see the circle appear on screen.", 'space', False],
     'Example4': [['circle', 'feedback'], 'c', True],
     'Instructions5': ['Now you will have a chance to practice the task before moving on to the first phase.\n\nPay attention to the instructions on screen to know which stimuli could appear.', 'space', False],
-    'Feedback1': [['options'], 'space', True],
-    'Practice1': None,
-    'Feedback2': [['options'], 'space', True],
-    'Practice2': None,
-    'Feedback3': [['options'], 'space', True],
-    'Practice4': None,
+    'Feedback4': [['options'], 'space', True],
+    'Practice': None,
+    'Practices': None,
     'Instructions6': ['Good job on the practice trials. You can now move on to the test trials.\n\nYou will do the same task as in the practice, completing a distinct blocks of trials for each of the phases described earlied.\n\nEach block will last about 3-5 minutes long. You will have a short break in between these trials.', 'space', False],
     'Break1': [['options'], 'space', True],
     'Stim1': None,
+    'Break1s': [['breaks'], 'space', True],
+    'Stim1s': None,
     'Break2': [['break'], 'space', True],
     'Stim2': None,
+    'Break2s': [['breaks'], 'space', True],
+    'Stim2s': None,
     'Break4': [['break'], 'space', True],
     'Stim4': None,
+    'Break4s': [['breaks'], 'space', True],
+    'Stim4s': None,
     '4RTEnd': ['Thank you!', 'space', True]
 }
 
@@ -75,35 +73,42 @@ four_opt_dirs = 'Stimuli/Schedules/4_options'
 
 one_opt_fname_list = get_order_file(one_opt_dirs)
 one_opt_fname = one_opt_fname_list[0] if one_opt_fname_list else None
-schedule1 = get_sched_df(one_opt_fname)[::-1].reset_index(drop=True) if one_opt_fname else pd.DataFrame()
-
-two_opt_fname_list = get_order_file(two_opt_dirs)
-two_opt_fname = two_opt_fname_list[0] if two_opt_fname_list else None
-schedule2 = get_sched_df(two_opt_fname)[::-1].reset_index(drop=True) if two_opt_fname else pd.DataFrame()
-
-four_opt_fname_list = get_order_file(four_opt_dirs)
-four_opt_fname = four_opt_fname_list[0] if four_opt_fname_list else None
-schedule4 = get_sched_df(four_opt_fname)[::-1].reset_index(drop=True) if four_opt_fname else pd.DataFrame()
-
-visuals['Stim1'] = [schedule1, 'c', True]
-visuals['Stim2'] = [schedule2, 'c', True]
-visuals['Stim4'] = [schedule4, 'c', True]
+schedule1 = get_sched_df(one_opt_fname).reset_index(drop=True) if one_opt_fname else pd.DataFrame()
 
 one_opt_fname_list = get_order_file(one_opt_dirs)
 one_opt_fname = one_opt_fname_list[0] if one_opt_fname_list else None
-practice1 = get_sched_df(one_opt_fname)[::-1].reset_index(drop=True)[:20] if one_opt_fname else pd.DataFrame()
+schedule1s = get_sched_df(one_opt_fname).reset_index(drop=True) if one_opt_fname else pd.DataFrame()
+
 
 two_opt_fname_list = get_order_file(two_opt_dirs)
 two_opt_fname = two_opt_fname_list[0] if two_opt_fname_list else None
-practice2 = get_sched_df(two_opt_fname)[::-1].reset_index(drop=True)[:20] if two_opt_fname else pd.DataFrame()
+schedule2 = get_sched_df(two_opt_fname).reset_index(drop=True) if two_opt_fname else pd.DataFrame()
+
+two_opt_fname_list = get_order_file(two_opt_dirs)
+two_opt_fname = two_opt_fname_list[0] if two_opt_fname_list else None
+schedule2s = get_sched_df(two_opt_fname).reset_index(drop=True) if two_opt_fname else pd.DataFrame()
+
 
 four_opt_fname_list = get_order_file(four_opt_dirs)
 four_opt_fname = four_opt_fname_list[0] if four_opt_fname_list else None
-practice4 = get_sched_df(four_opt_fname)[::-1].reset_index(drop=True)[:20] if four_opt_fname else pd.DataFrame()
+schedule4 = get_sched_df(four_opt_fname).reset_index(drop=True) if four_opt_fname else pd.DataFrame()
 
-visuals['Practice1'] = [practice1[:20] if not practice1.empty else None, 'c', True]
-visuals['Practice2'] = [practice2[:20] if not practice2.empty else None, 'c', True]
-visuals['Practice4'] = [practice4[:20] if not practice4.empty else None, 'c', True]
+four_opt_fname_list = get_order_file(four_opt_dirs)
+four_opt_fname = four_opt_fname_list[0] if four_opt_fname_list else None
+schedule4s = get_sched_df(four_opt_fname).reset_index(drop=True) if four_opt_fname else pd.DataFrame()
+
+visuals['Stim1'] = [schedule1, 'c', True]
+visuals['Stim1s'] = [schedule1s, 'c', True]
+visuals['Stim2'] = [schedule2, 'c', True]
+visuals['Stim2s'] = [schedule2s, 'c', True]
+visuals['Stim4'] = [schedule4, 'c', True]
+visuals['Stim4s'] = [schedule4s, 'c', True]
+
+practice_files = [os.path.join(practice_dirs, file) for file in os.listdir(practice_dirs)]
+random.shuffle(practice_files)
+visuals['Practice'] = [pd.read_csv(practice_files[0], index_col=0, keep_default_na=False), 'c', True]
+random.shuffle(practice_files)
+visuals['Practices'] = [pd.read_csv(practice_files[0], index_col=0, keep_default_na=False), 'c', True]
 
 disp = Display(disptype='psychopy', bgc='black')
 scr = Screen(disptype='psychopy', bgc='black')
@@ -143,13 +148,14 @@ listener = pynput_mouse.Listener(on_click=on_click)
 listener.start()
 
 image_display_duration = 2
-practice_blocks = ['Practice1', 'Practice2', 'Practice4']
+practice_blocks = ['Practice', 'Practices']
 practice_attempts = {block: 0 for block in practice_blocks}
 max_practice_attempts = 3
 
 cont = True
 visual_screens = list(visuals.keys())
 visual_screen_idx = 0
+current_rep = 0
 
 task_clock = core.Clock()
 
@@ -163,8 +169,8 @@ while cont:
 
         scr.screen.clear()
 
-        if isinstance(visual_screen_data, str):
-            center_text.text = visual_screen_data
+        if isinstance(screen_content, str):
+            center_text.text = screen_content
             scr.screen.append(center_text)
             disp.fill(screen=scr)
             disp.show()
@@ -192,6 +198,7 @@ while cont:
             if not schedule.empty:
                 if current_rep < len(schedule):
                     cur_item = schedule['stim_type'][current_rep]
+                    display_time = schedule['duration'][current_rep]
 
                     item_responsetime = None
                     item_response = None
@@ -202,21 +209,30 @@ while cont:
                     item_starttime = task_clock.getTime()
                     item_condition = cur_item
 
+                    
+                    if visual_screen_name[-1] == 's':
+                            pre_text = 'singles'
+                    else:
+                        if 'stim' in visual_screen_name.lower():
+                            if '1' in visual_screen_name:
+                                pre_text = '1_option'
+                            elif '2' in visual_screen_name:
+                                pre_text = '2_options'
+                            elif '4' in visual_screen_name or 'practice' in visual_screen_name.lower():
+                                pre_text = '4_options'
+                    
                     if cur_item == 'NULL':
-                        if 'Stim1' in visual_screen_name or 'Practice1' in visual_screen_name:
-                            pre_text = '1_option'
-                        elif 'Stim2' in visual_screen_name or 'Practice2' in visual_screen_name:
-                            pre_text = '2_options'
-                        elif 'Stim4' in visual_screen_name or 'Practice4' in visual_screen_name:
-                            pre_text = '4_options'
-                        else:
-                            pre_text = '1_option'
-                        image_path = image_text.format(f'{pre_text}/options.png')
+                        image_path = image_text.format(f'{pre_text}/waiting.png')
 
                         image.setImage(image_path)
                         scr.screen.append(image)
                         disp.fill(screen=scr)
                         disp.show()
+
+                        item_starttime = task_clock.getTime()
+                        item_condition = cur_item
+
+                        core.wait(display_time)
 
                         item_endtime = task_clock.getTime()
                         item_duration = item_endtime - item_starttime
@@ -228,12 +244,6 @@ while cont:
                         current_rep += 1
 
                     else:
-                        if '1' in visual_screen_name:
-                            pre_text = '1_option'
-                        elif '2' in visual_screen_name:
-                            pre_text = '2_options'
-                        else:
-                            pre_text = '4_options'
                         image_path = image_text.format(f'{pre_text}/{cur_item}.png')
 
                         image.setImage(image_path)
@@ -421,6 +431,7 @@ while cont:
                 if visual_screen_idx >= len(visual_screens):
                     cont = False
         else:
+            print(screen_content)
             print("Unexpected data type for visual screen:", type(screen_content))
             cont = False
     else:
