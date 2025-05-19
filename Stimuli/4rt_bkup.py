@@ -265,23 +265,30 @@ while cont:
                         item_response = None
                         item_accuracy = 0
 
-                        while task_clock.getTime() - item_starttime < image_display_duration:
-                            keys = event.getKeys(keyList=['escape'])
-                            if 'escape' in keys:
-                                print("Escape key pressed. Exiting...")
-                                cont = False
-                                break
-                            if response_received:
-                                item_responsetime = task_clock.getTime()
-                                if current_value == 1: item_response = 'left'
-                                elif current_value == 2: item_response = 'middle_l'
-                                elif current_value == 3: item_response = 'middle_r'
-                                elif current_value == 4: item_response = 'right'
-                                if correct_value is not np.nan and current_value == correct_value:
-                                    item_accuracy = 1
-                                else:
-                                    item_accuracy = 0
-                                break
+                        if 'break' in visual_screen_name.lower():
+                            while task_clock.getTime() - item_starttime < 60:
+                                keys = event.getKeys(keyList=['space'])
+                                if 'space' in keys:
+                                    break
+                        else:
+                            while task_clock.getTime() - item_starttime < image_display_duration:
+                                keys = event.getKeys(keyList=['escape'])
+                                if 'escape' in keys:
+                                    print("Escape key pressed. Exiting...")
+                                    cont = False
+                                    break
+                                
+                                if response_received:
+                                    item_responsetime = task_clock.getTime()
+                                    if current_value == 1: item_response = 'left'
+                                    elif current_value == 2: item_response = 'middle_l'
+                                    elif current_value == 3: item_response = 'middle_r'
+                                    elif current_value == 4: item_response = 'right'
+                                    if correct_value is not np.nan and current_value == correct_value:
+                                        item_accuracy = 1
+                                    else:
+                                        item_accuracy = 0
+                                    break
 
                         last_stim_responsetime = item_responsetime
                         last_stim_accuracy = item_accuracy
@@ -393,23 +400,29 @@ while cont:
                     item_response = None
                     item_accuracy = 0
 
-                    while task_clock.getTime() - item_starttime < image_display_duration:
-                        keys = event.getKeys(keyList=['escape'])
-                        if 'escape' in keys:
-                            print("Escape key pressed. Exiting...")
-                            cont = False
-                            break
-                        if response_received:
-                            item_responsetime = task_clock.getTime()
-                            if current_value == 1: item_response = 'left'
-                            elif current_value == 2: item_response = 'middle_l'
-                            elif current_value == 3: item_response = 'middle_r'
-                            elif current_value == 4: item_response = 'right'
-                            if correct_value is not np.nan and current_value == correct_value:
-                                item_accuracy = 1
-                            else:
-                                item_accuracy = 0
-                            break
+                    if 'break' in visual_screen_name.lower():
+                            while task_clock.getTime() - item_starttime < 60:
+                                keys = event.getKeys(keyList=['space'])
+                                if 'space' in keys:
+                                    break
+                    else:
+                        while task_clock.getTime() - item_starttime < image_display_duration:
+                            keys = event.getKeys(keyList=['escape'])
+                            if 'escape' in keys:
+                                print("Escape key pressed. Exiting...")
+                                cont = False
+                                break
+                            if response_received:
+                                item_responsetime = task_clock.getTime()
+                                if current_value == 1: item_response = 'left'
+                                elif current_value == 2: item_response = 'middle_l'
+                                elif current_value == 3: item_response = 'middle_r'
+                                elif current_value == 4: item_response = 'right'
+                                if correct_value is not np.nan and current_value == correct_value:
+                                    item_accuracy = 1
+                                else:
+                                    item_accuracy = 0
+                                break
 
                     last_stim_responsetime = item_responsetime
                     last_stim_accuracy = item_accuracy
