@@ -294,7 +294,7 @@ while cont:
                             mean_accuracy = np.mean(accuracy_list)
                             print(f"{visual_screen_name} Accuracy: {mean_accuracy:.2f}")
 
-                            if mean_accuracy >= 0.75:
+                            if mean_accuracy >= 0.8:
                                 visual_screen_idx += 1
                             else:
                                 practice_attempts[visual_screen_name] += 1

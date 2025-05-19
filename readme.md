@@ -105,3 +105,7 @@ The timing of the task (e.g., stimulus duration, inter-trial interval) can be ad
 * Improve instructions text (i.e. shorten and add images for examples (e.g. these will be the stimuli to attend to for this block))
 * Revisit stim presentation be random timing (i.e. randomly set or not?)
 
+# TODO
+* Update practice blocks (no practicing each condition in a separate block. Rather, 2 blocks of quad choice blocks: block 1 - spatial cue; block 2: central presentation)
+* Update each experimental block to have 2 subblocks: block 1 - spatial cue; block 2: central presentation
+
